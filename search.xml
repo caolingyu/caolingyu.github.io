@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title><![CDATA[hexo简介]]></title>
-    <url>%2F2019%2F01%2F08%2Fhexo%E7%AE%80%E4%BB%8B%2F</url>
-    <content type="text"><![CDATA[hexo使用方法简介Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new "My New Post" More info: Writing Run server1$ hexo server More info: Server Generate static files1$ hexo generate More info: Generating Deploy to remote sites1$ hexo deploy More info: Deployment]]></content>
-      <categories>
-        <category>Tech</category>
-      </categories>
-      <tags>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title><![CDATA[用Git和Gitlab进行协作]]></title>
     <url>%2F2019%2F01%2F08%2F%E7%94%A8Git%E5%92%8CGitlab%E8%BF%9B%E8%A1%8C%E5%8D%8F%E4%BD%9C%2F</url>
     <content type="text"><![CDATA[在Gitlab上的远程仓库为每个用户创建分支, 例如dev-xxx本地clone项目以后用fetch命令将远程分支拉到本地1git fetch origin dev-xxx:dev-xxx 在本地切换分支1git checkout dev-xxx 然后进行开发并提交修改开发完成后提交到远程dev-xxx分支1git push -u origin dev-xxx 之后可以在网页端提交merge request 注意: 为了确保本地dev-xxx分支和远程仓库master分支一致, 请在每次开发前先更新本地仓库(dev-xxx分支)123git checkout dev-xxxgit fetch --allgit reset --hard origin/dev-xxx]]></content>
