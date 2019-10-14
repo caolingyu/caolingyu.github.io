@@ -15,4 +15,4 @@ comments: false
 - Many other novel techs.
 
 ## CV
-[我的简历](http://caolingyu.me/about/cv.html)
+[我的简历](http://caolingyu.github.io/about/cv.html)
