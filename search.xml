@@ -62,9 +62,9 @@
         <category>Tech</category>
       </categories>
       <tags>
+        <tag>Nginx</tag>
         <tag>Flask</tag>
         <tag>gunicorn</tag>
-        <tag>Nginx</tag>
         <tag>CentOs</tag>
       </tags>
   </entry>
