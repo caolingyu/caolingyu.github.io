@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Allow: /archives/
+Allow: /categories/
+Allow: /about/
+
+Sitemap: http://caolingyu.github.io/sitemap.xml
