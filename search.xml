@@ -199,29 +199,6 @@
       </tags>
   </entry>
   <entry>
-    <title>NEXT主题的一处小瑕疵</title>
-    <url>/2017/05/22/NEXT%E4%B8%BB%E9%A2%98%E7%9A%84%E4%B8%80%E5%A4%84%E5%B0%8F%E7%91%95%E7%96%B5/</url>
-    <content><![CDATA[<p>在使用NEXT主题中发现的一处小瑕疵，研究以后发现了解决方法</p>
-<span id="more"></span>
-<h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>昨天把Hexo部署好并且安装了NEXT主题，整体感觉非常棒。然而今天想测试一下标签和分类功能的时候，发现了一处小bug。如下图所示：</p>
-<p><img src="http://caolingyu.me/images/post3_1.png" alt="Pic"></p>
-<p>强迫症的我表示完全不能忍，遂百度谷歌一通搜索，然而无果。</p>
-<p>于是来到了NEXT的github仓库，想在issue里看一下有没有人提问，万万没想到竟然没有人提出类似的问题！莫非这是一个新版本更新造成的新bug？</p>
-<p>再看了几个使用同样主题的博客以后，我发现他们均未出现此问题，万般无奈之下，只能开始琢磨源代码！</p>
-<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;% block title %&#125;&#123;&#123; __(&#x27;title.category&#x27;) &#125;&#125;: &#123;&#123; page.category &#125;&#125; | &#123;&#123; config.title &#125;&#125;&#123;% endblock %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block content %&#125;</span><br><span class="line"></span><br><span class="line">  &lt;section id=&quot;posts&quot; class=&quot;posts-collapse&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;collection-title&quot;&gt;</span><br><span class="line">      &lt;&#123;% if theme.seo %&#125;h2&#123;% else %&#125;h1&#123;% endif %&#125;&gt;&#123;#</span><br><span class="line">      #&#125;&#123;&#123; page.category &#125;&#125;&#123;#</span><br><span class="line">      #&#125;&lt;small&gt;&#123;&#123;  __(&#x27;title.category&#x27;)  &#125;&#125;&lt;/small&gt;</span><br><span class="line">      &lt;/&#123;% if theme.seo %&#125;h2&#123;% else %&#125;h1&#123;% endif %&#125;&gt;</span><br><span class="line">    &lt;/div&gt;</span><br></pre></td></tr></table></figure>
-
-<p>以上代码来自<strong>layout&#x2F;category.swig</strong>这个文件。同一目录下的<strong>tag.swig</strong>也包含类似的代码。问题就在于这段代码里的h1和h2。接下来找到<strong>source&#x2F;css&#x2F;_common&#x2F;components&#x2F;post&#x2F;post-collapse.styl</strong>这个文件，发现里面含有<code>h2 &#123; margin-left: 20px; &#125;</code>这行代码，但是并没有定义h1。我想这应该就是造成这个问题的原因。于是我加入了<code>h1 &#123; margin-left: 20px; &#125;</code>。果然问题迎刃而解！如下图：</p>
-<p><img src="http://caolingyu.me/images/post3_2.png" alt="Pic"></p>
-]]></content>
-      <categories>
-        <category>Tech</category>
-      </categories>
-      <tags>
-        <tag>NEXT</tag>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Win10+Ubuntu双系统卸载Ubuntu</title>
     <url>/2017/05/24/Win10-Ubuntu%E5%8F%8C%E7%B3%BB%E7%BB%9F%E5%8D%B8%E8%BD%BDUbuntu/</url>
     <content><![CDATA[<p>安装Windows10和Ubuntu双系统以后卸载Ubuntu的方法</p>
@@ -247,39 +224,26 @@
       </tags>
   </entry>
   <entry>
-    <title>elasticsearch--从安装到使用</title>
-    <url>/2018/06/14/elasticsearch-%E4%BB%8E%E5%AE%89%E8%A3%85%E5%88%B0%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<p>最近在做一个实体链接的项目，主要是先用命名实体识别的模型去识别文本中的特定实体，然后再将识别出来的实体链接到知识图谱中对应的节点。之所以要这么做是因为往往识别出来的实体名字并不和图谱中的节点完全对应。关于实体链接的具体细节在这里不多赘述，因为不是本文的重点，大致就是对每个识别出的实体从图谱中选出一些候选节点，计算相似度然后选最相似的。  </p>
-<p>这里主要说一下挑选候选节点这一步，之所以要用到elasticsearch，是因为我们的图谱目前还不支持模糊搜索，而es的match提供了很好的模糊搜索功能，并且还能给每个结果打分。</p>
-<p>我的系统是macOS 10.13.5，安装的es版本是5.6.4。在macOS上有两种主流的安装方法，一种是从官网直接下载压缩包，另一种是用homebrew安装，本文使用的是前一种方法。<br>首先去<a href="https://www.elastic.co/downloads/past-releases/elasticsearch-5-6-4">官网</a>下载对应版本，下载解压缩完以后我把放在用户根目录下，所以路径是~&#x2F;elasticsearch-5.6.4&#x2F;，这时候其实已经可以运行了，执行elasticsearch-5.6.4&#x2F;bin&#x2F;elasticsearch就可以启动es。但是有一个问题，es默认的analyzer对中文的分词不是很友好，往往会在搜索的时候把中文分成一个个字，这显然不是我们想要的，好在有ik插件，解决了这个问题。安装ik插件也有两种方法，一种是手动从官网下载安装包放到指定文件夹，另一种可以用elasticsearch-plugin命令来安装（需要安装5.5.1版本以上的es）<br><code>./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v5.6.4/elasticsearch-analysis-ik-5.6.4.zip</code><br>因为我安装的es高于5.5.1，所以我采用了这种方法，很方便。具体可以参考<a href="https://github.com/medcl/elasticsearch-analysis-ik#install">官方repo</a></p>
-<p>接下来就是es的使用了，首先了解一下es中的索引，它是ES中的一个存储类型，与数据库类似，内部包含类型字段，类型中包含各种文档。如果和关系型数据库进行类比的话，索引就是数据库，类型就是数据库中的表，文档就是每张表中的每一行记录。<br>下面介绍一些常用的操作  </p>
-<ul>
-<li><p>查看所有索引<br><code>curl &#39;localhost:9200/_cat/indices?v&#39;</code>  </p>
-</li>
-<li><p>创建一个名为country的索引<br><code>curl -XPUT &#39;localhost:9200/country?pretty&#39;</code>  </p>
-</li>
-<li><p>在country中设置一个名为city的类型，并写入一条数据  </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -XPUT &#x27;localhost:9200/country/city/1?pretty&#x27; -d &#x27;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;name&quot;: &quot;London&quot;</span><br><span class="line">&#125;&#x27;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>查询  </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -XGET &#x27;localhost:9200/country/city/1?pretty&#x27;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;_index&quot; : &quot;country&quot;,</span><br><span class="line">  &quot;_type&quot; : &quot;city&quot;,</span><br><span class="line">  &quot;_id&quot; : &quot;1&quot;,</span><br><span class="line">  &quot;_version&quot; : 1,</span><br><span class="line">  &quot;found&quot; : true, &quot;_source&quot; : &#123; &quot;name&quot;: &quot;London&quot; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>删除索引<br><code>curl -XDELETE &#39;localhost:9200/customer?pretty&#39;</code></p>
-</li>
-</ul>
-<p>另外如果需要在python中使用es，可以参考以下文章  </p>
-<ul>
-<li><a href="https://www.cnblogs.com/yxpblog/p/5141738.html">python操作Elasticsearch (一、例子)</a>  </li>
-<li><a href="https://www.cnblogs.com/cswuyg/p/5651620.html">Elasticsearch使用备忘</a>  </li>
-<li><a href="https://blog.csdn.net/YHYR_YCY/article/details/78882011">基于Python操作ElasticSearch</a><br>还有一篇讲解es中的映射和分析的，我觉得写的也不错  </li>
-<li><a href="https://blog.csdn.net/hzrandd/article/details/47128895">ElasticSearch映射和分析</a></li>
-</ul>
+    <title>NEXT主题的一处小瑕疵</title>
+    <url>/2017/05/22/NEXT%E4%B8%BB%E9%A2%98%E7%9A%84%E4%B8%80%E5%A4%84%E5%B0%8F%E7%91%95%E7%96%B5/</url>
+    <content><![CDATA[<p>在使用NEXT主题中发现的一处小瑕疵，研究以后发现了解决方法</p>
+<span id="more"></span>
+<h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>昨天把Hexo部署好并且安装了NEXT主题，整体感觉非常棒。然而今天想测试一下标签和分类功能的时候，发现了一处小bug。如下图所示：</p>
+<p><img src="http://caolingyu.me/images/post3_1.png" alt="Pic"></p>
+<p>强迫症的我表示完全不能忍，遂百度谷歌一通搜索，然而无果。</p>
+<p>于是来到了NEXT的github仓库，想在issue里看一下有没有人提问，万万没想到竟然没有人提出类似的问题！莫非这是一个新版本更新造成的新bug？</p>
+<p>再看了几个使用同样主题的博客以后，我发现他们均未出现此问题，万般无奈之下，只能开始琢磨源代码！</p>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;% block title %&#125;&#123;&#123; __(&#x27;title.category&#x27;) &#125;&#125;: &#123;&#123; page.category &#125;&#125; | &#123;&#123; config.title &#125;&#125;&#123;% endblock %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block content %&#125;</span><br><span class="line"></span><br><span class="line">  &lt;section id=&quot;posts&quot; class=&quot;posts-collapse&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;collection-title&quot;&gt;</span><br><span class="line">      &lt;&#123;% if theme.seo %&#125;h2&#123;% else %&#125;h1&#123;% endif %&#125;&gt;&#123;#</span><br><span class="line">      #&#125;&#123;&#123; page.category &#125;&#125;&#123;#</span><br><span class="line">      #&#125;&lt;small&gt;&#123;&#123;  __(&#x27;title.category&#x27;)  &#125;&#125;&lt;/small&gt;</span><br><span class="line">      &lt;/&#123;% if theme.seo %&#125;h2&#123;% else %&#125;h1&#123;% endif %&#125;&gt;</span><br><span class="line">    &lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<p>以上代码来自<strong>layout&#x2F;category.swig</strong>这个文件。同一目录下的<strong>tag.swig</strong>也包含类似的代码。问题就在于这段代码里的h1和h2。接下来找到<strong>source&#x2F;css&#x2F;_common&#x2F;components&#x2F;post&#x2F;post-collapse.styl</strong>这个文件，发现里面含有<code>h2 &#123; margin-left: 20px; &#125;</code>这行代码，但是并没有定义h1。我想这应该就是造成这个问题的原因。于是我加入了<code>h1 &#123; margin-left: 20px; &#125;</code>。果然问题迎刃而解！如下图：</p>
+<p><img src="http://caolingyu.me/images/post3_2.png" alt="Pic"></p>
 ]]></content>
       <categories>
         <category>Tech</category>
       </categories>
       <tags>
-        <tag>ElasticSearch</tag>
+        <tag>NEXT</tag>
+        <tag>Hexo</tag>
       </tags>
   </entry>
   <entry>
@@ -447,5 +411,41 @@
       <categories>
         <category>Life</category>
       </categories>
+  </entry>
+  <entry>
+    <title>elasticsearch--从安装到使用</title>
+    <url>/2018/06/14/elasticsearch-%E4%BB%8E%E5%AE%89%E8%A3%85%E5%88%B0%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>最近在做一个实体链接的项目，主要是先用命名实体识别的模型去识别文本中的特定实体，然后再将识别出来的实体链接到知识图谱中对应的节点。之所以要这么做是因为往往识别出来的实体名字并不和图谱中的节点完全对应。关于实体链接的具体细节在这里不多赘述，因为不是本文的重点，大致就是对每个识别出的实体从图谱中选出一些候选节点，计算相似度然后选最相似的。  </p>
+<p>这里主要说一下挑选候选节点这一步，之所以要用到elasticsearch，是因为我们的图谱目前还不支持模糊搜索，而es的match提供了很好的模糊搜索功能，并且还能给每个结果打分。</p>
+<p>我的系统是macOS 10.13.5，安装的es版本是5.6.4。在macOS上有两种主流的安装方法，一种是从官网直接下载压缩包，另一种是用homebrew安装，本文使用的是前一种方法。<br>首先去<a href="https://www.elastic.co/downloads/past-releases/elasticsearch-5-6-4">官网</a>下载对应版本，下载解压缩完以后我把放在用户根目录下，所以路径是~&#x2F;elasticsearch-5.6.4&#x2F;，这时候其实已经可以运行了，执行elasticsearch-5.6.4&#x2F;bin&#x2F;elasticsearch就可以启动es。但是有一个问题，es默认的analyzer对中文的分词不是很友好，往往会在搜索的时候把中文分成一个个字，这显然不是我们想要的，好在有ik插件，解决了这个问题。安装ik插件也有两种方法，一种是手动从官网下载安装包放到指定文件夹，另一种可以用elasticsearch-plugin命令来安装（需要安装5.5.1版本以上的es）<br><code>./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v5.6.4/elasticsearch-analysis-ik-5.6.4.zip</code><br>因为我安装的es高于5.5.1，所以我采用了这种方法，很方便。具体可以参考<a href="https://github.com/medcl/elasticsearch-analysis-ik#install">官方repo</a></p>
+<p>接下来就是es的使用了，首先了解一下es中的索引，它是ES中的一个存储类型，与数据库类似，内部包含类型字段，类型中包含各种文档。如果和关系型数据库进行类比的话，索引就是数据库，类型就是数据库中的表，文档就是每张表中的每一行记录。<br>下面介绍一些常用的操作  </p>
+<ul>
+<li><p>查看所有索引<br><code>curl &#39;localhost:9200/_cat/indices?v&#39;</code>  </p>
+</li>
+<li><p>创建一个名为country的索引<br><code>curl -XPUT &#39;localhost:9200/country?pretty&#39;</code>  </p>
+</li>
+<li><p>在country中设置一个名为city的类型，并写入一条数据  </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -XPUT &#x27;localhost:9200/country/city/1?pretty&#x27; -d &#x27;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;name&quot;: &quot;London&quot;</span><br><span class="line">&#125;&#x27;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查询  </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -XGET &#x27;localhost:9200/country/city/1?pretty&#x27;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;_index&quot; : &quot;country&quot;,</span><br><span class="line">  &quot;_type&quot; : &quot;city&quot;,</span><br><span class="line">  &quot;_id&quot; : &quot;1&quot;,</span><br><span class="line">  &quot;_version&quot; : 1,</span><br><span class="line">  &quot;found&quot; : true, &quot;_source&quot; : &#123; &quot;name&quot;: &quot;London&quot; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除索引<br><code>curl -XDELETE &#39;localhost:9200/customer?pretty&#39;</code></p>
+</li>
+</ul>
+<p>另外如果需要在python中使用es，可以参考以下文章  </p>
+<ul>
+<li><a href="https://www.cnblogs.com/yxpblog/p/5141738.html">python操作Elasticsearch (一、例子)</a>  </li>
+<li><a href="https://www.cnblogs.com/cswuyg/p/5651620.html">Elasticsearch使用备忘</a>  </li>
+<li><a href="https://blog.csdn.net/YHYR_YCY/article/details/78882011">基于Python操作ElasticSearch</a><br>还有一篇讲解es中的映射和分析的，我觉得写的也不错  </li>
+<li><a href="https://blog.csdn.net/hzrandd/article/details/47128895">ElasticSearch映射和分析</a></li>
+</ul>
+]]></content>
+      <categories>
+        <category>Tech</category>
+      </categories>
+      <tags>
+        <tag>ElasticSearch</tag>
+      </tags>
   </entry>
 </search>
