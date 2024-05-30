@@ -30,39 +30,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Gitlab服务器的备份和迁移</title>
-    <url>/2018/06/18/Gitlab%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%81%E7%A7%BB/</url>
-    <content><![CDATA[<p>之前在一台Ubuntu的服务器上搭建了一个Gitlab服务器，最近这台服务器即将被回收，所以需要将原来的Gitlab迁移到新的服务器上，由于我是用Omnibus安装的，备份和还原的步骤相对来说比较简单，但也有不少需要注意的点。</p>
-<p>首先说一下环境和版本  </p>
-<ul>
-<li>系统：Ubuntu 16.04</li>
-<li>Gitlab版本：gitlab-ee_10.7.0-ee.0_amd64</li>
-<li>安装方法：Omnibus</li>
-</ul>
-<p>大致流程如下  </p>
-<ol>
-<li>在原服务器执行备份</li>
-<li>在新服务器安装<strong>相同版本</strong>的Gitlab</li>
-<li>将原服务器的备份传输到新服务器</li>
-<li>执行还原命令</li>
-<li>Done</li>
-</ol>
-<p>在原服务器进行备份相当简单，只需要执行以下命令<br><code>gitlab-rake gitlab:backup:create</code><br>默认的备份位置是&#x2F;var&#x2F;opt&#x2F;gitlab&#x2F;backups，由于原服务器这个分区的空间已经不足了，所以在备份的时候出现报错，这里顺便提一下，第一次报错以后我把backups文件夹删除又创建了，再执行备份命令的时候提示权限不够，执行以下命令可以解决  </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chown git /var/opt/gitlab/backups</span><br><span class="line">chmod 700 /var/opt/gitlab/backups</span><br></pre></td></tr></table></figure>
-<p>磁盘空间不足的问题可以通过修改备份的保存位置解决<br>打开&#x2F;etc&#x2F;gitlab&#x2F;gitlab.rb文件，找到这一行<br><code>default[&#39;gitlab&#39;][&#39;gitlab-rails&#39;][&#39;backup_path&#39;] = &quot;/var/opt/gitlab/backups&quot;</code><br>修改后面的路径以后reconfigure一下再备份即可  </p>
-<p>在新服务器上安装完gitlab以后，执行以下命令进行还原  </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo gitlab-ctl stop unicorn</span><br><span class="line">sudo gitlab-ctl stop sidekiq</span><br><span class="line">sudo gitlab-rake gitlab:backup:restore BACKUP=&#x27;your_backup_file&#x27;</span><br><span class="line">sudo gitlab-ctl restart</span><br></pre></td></tr></table></figure>
-<p>如果要备份和还原配置文件的话只需要将&#x2F;etc&#x2F;gitlab文件夹打包传输到新服务器，解压放到新服务器相同的目录下。可以将新gitlab产生的配置文件夹备份一下以备不时之需。</p>
-]]></content>
-      <categories>
-        <category>Tech</category>
-      </categories>
-      <tags>
-        <tag>Gitlab</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Happy Birthday</title>
     <url>/2017/05/28/Happy-Birthday/</url>
     <content><![CDATA[<p>祝我生日快乐~继续加油！</p>
@@ -171,6 +138,39 @@
       </tags>
   </entry>
   <entry>
+    <title>Gitlab服务器的备份和迁移</title>
+    <url>/2018/06/18/Gitlab%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%81%E7%A7%BB/</url>
+    <content><![CDATA[<p>之前在一台Ubuntu的服务器上搭建了一个Gitlab服务器，最近这台服务器即将被回收，所以需要将原来的Gitlab迁移到新的服务器上，由于我是用Omnibus安装的，备份和还原的步骤相对来说比较简单，但也有不少需要注意的点。</p>
+<p>首先说一下环境和版本  </p>
+<ul>
+<li>系统：Ubuntu 16.04</li>
+<li>Gitlab版本：gitlab-ee_10.7.0-ee.0_amd64</li>
+<li>安装方法：Omnibus</li>
+</ul>
+<p>大致流程如下  </p>
+<ol>
+<li>在原服务器执行备份</li>
+<li>在新服务器安装<strong>相同版本</strong>的Gitlab</li>
+<li>将原服务器的备份传输到新服务器</li>
+<li>执行还原命令</li>
+<li>Done</li>
+</ol>
+<p>在原服务器进行备份相当简单，只需要执行以下命令<br><code>gitlab-rake gitlab:backup:create</code><br>默认的备份位置是&#x2F;var&#x2F;opt&#x2F;gitlab&#x2F;backups，由于原服务器这个分区的空间已经不足了，所以在备份的时候出现报错，这里顺便提一下，第一次报错以后我把backups文件夹删除又创建了，再执行备份命令的时候提示权限不够，执行以下命令可以解决  </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chown git /var/opt/gitlab/backups</span><br><span class="line">chmod 700 /var/opt/gitlab/backups</span><br></pre></td></tr></table></figure>
+<p>磁盘空间不足的问题可以通过修改备份的保存位置解决<br>打开&#x2F;etc&#x2F;gitlab&#x2F;gitlab.rb文件，找到这一行<br><code>default[&#39;gitlab&#39;][&#39;gitlab-rails&#39;][&#39;backup_path&#39;] = &quot;/var/opt/gitlab/backups&quot;</code><br>修改后面的路径以后reconfigure一下再备份即可  </p>
+<p>在新服务器上安装完gitlab以后，执行以下命令进行还原  </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo gitlab-ctl stop unicorn</span><br><span class="line">sudo gitlab-ctl stop sidekiq</span><br><span class="line">sudo gitlab-rake gitlab:backup:restore BACKUP=&#x27;your_backup_file&#x27;</span><br><span class="line">sudo gitlab-ctl restart</span><br></pre></td></tr></table></figure>
+<p>如果要备份和还原配置文件的话只需要将&#x2F;etc&#x2F;gitlab文件夹打包传输到新服务器，解压放到新服务器相同的目录下。可以将新gitlab产生的配置文件夹备份一下以备不时之需。</p>
+]]></content>
+      <categories>
+        <category>Tech</category>
+      </categories>
+      <tags>
+        <tag>Gitlab</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Msc Project的一些思路</title>
     <url>/2017/05/23/Msc-Project%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%9D%E8%B7%AF/</url>
     <content><![CDATA[<p>这篇文章主要讲一下我研究生毕业论文的思路</p>
@@ -199,6 +199,29 @@
       </tags>
   </entry>
   <entry>
+    <title>NEXT主题的一处小瑕疵</title>
+    <url>/2017/05/22/NEXT%E4%B8%BB%E9%A2%98%E7%9A%84%E4%B8%80%E5%A4%84%E5%B0%8F%E7%91%95%E7%96%B5/</url>
+    <content><![CDATA[<p>在使用NEXT主题中发现的一处小瑕疵，研究以后发现了解决方法</p>
+<span id="more"></span>
+<h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>昨天把Hexo部署好并且安装了NEXT主题，整体感觉非常棒。然而今天想测试一下标签和分类功能的时候，发现了一处小bug。如下图所示：</p>
+<p><img src="http://caolingyu.me/images/post3_1.png" alt="Pic"></p>
+<p>强迫症的我表示完全不能忍，遂百度谷歌一通搜索，然而无果。</p>
+<p>于是来到了NEXT的github仓库，想在issue里看一下有没有人提问，万万没想到竟然没有人提出类似的问题！莫非这是一个新版本更新造成的新bug？</p>
+<p>再看了几个使用同样主题的博客以后，我发现他们均未出现此问题，万般无奈之下，只能开始琢磨源代码！</p>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;% block title %&#125;&#123;&#123; __(&#x27;title.category&#x27;) &#125;&#125;: &#123;&#123; page.category &#125;&#125; | &#123;&#123; config.title &#125;&#125;&#123;% endblock %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block content %&#125;</span><br><span class="line"></span><br><span class="line">  &lt;section id=&quot;posts&quot; class=&quot;posts-collapse&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;collection-title&quot;&gt;</span><br><span class="line">      &lt;&#123;% if theme.seo %&#125;h2&#123;% else %&#125;h1&#123;% endif %&#125;&gt;&#123;#</span><br><span class="line">      #&#125;&#123;&#123; page.category &#125;&#125;&#123;#</span><br><span class="line">      #&#125;&lt;small&gt;&#123;&#123;  __(&#x27;title.category&#x27;)  &#125;&#125;&lt;/small&gt;</span><br><span class="line">      &lt;/&#123;% if theme.seo %&#125;h2&#123;% else %&#125;h1&#123;% endif %&#125;&gt;</span><br><span class="line">    &lt;/div&gt;</span><br></pre></td></tr></table></figure>
+
+<p>以上代码来自<strong>layout&#x2F;category.swig</strong>这个文件。同一目录下的<strong>tag.swig</strong>也包含类似的代码。问题就在于这段代码里的h1和h2。接下来找到<strong>source&#x2F;css&#x2F;_common&#x2F;components&#x2F;post&#x2F;post-collapse.styl</strong>这个文件，发现里面含有<code>h2 &#123; margin-left: 20px; &#125;</code>这行代码，但是并没有定义h1。我想这应该就是造成这个问题的原因。于是我加入了<code>h1 &#123; margin-left: 20px; &#125;</code>。果然问题迎刃而解！如下图：</p>
+<p><img src="http://caolingyu.me/images/post3_2.png" alt="Pic"></p>
+]]></content>
+      <categories>
+        <category>Tech</category>
+      </categories>
+      <tags>
+        <tag>NEXT</tag>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Win10+Ubuntu双系统卸载Ubuntu</title>
     <url>/2017/05/24/Win10-Ubuntu%E5%8F%8C%E7%B3%BB%E7%BB%9F%E5%8D%B8%E8%BD%BDUbuntu/</url>
     <content><![CDATA[<p>安装Windows10和Ubuntu双系统以后卸载Ubuntu的方法</p>
@@ -224,63 +247,39 @@
       </tags>
   </entry>
   <entry>
-    <title>NEXT主题的一处小瑕疵</title>
-    <url>/2017/05/22/NEXT%E4%B8%BB%E9%A2%98%E7%9A%84%E4%B8%80%E5%A4%84%E5%B0%8F%E7%91%95%E7%96%B5/</url>
-    <content><![CDATA[<p>在使用NEXT主题中发现的一处小瑕疵，研究以后发现了解决方法</p>
-<span id="more"></span>
-<h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>昨天把Hexo部署好并且安装了NEXT主题，整体感觉非常棒。然而今天想测试一下标签和分类功能的时候，发现了一处小bug。如下图所示：</p>
-<p><img src="http://caolingyu.me/images/post3_1.png" alt="Pic"></p>
-<p>强迫症的我表示完全不能忍，遂百度谷歌一通搜索，然而无果。</p>
-<p>于是来到了NEXT的github仓库，想在issue里看一下有没有人提问，万万没想到竟然没有人提出类似的问题！莫非这是一个新版本更新造成的新bug？</p>
-<p>再看了几个使用同样主题的博客以后，我发现他们均未出现此问题，万般无奈之下，只能开始琢磨源代码！</p>
-<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&#123;% block title %&#125;&#123;&#123; __(&#x27;title.category&#x27;) &#125;&#125;: &#123;&#123; page.category &#125;&#125; | &#123;&#123; config.title &#125;&#125;&#123;% endblock %&#125;</span><br><span class="line"></span><br><span class="line">&#123;% block content %&#125;</span><br><span class="line"></span><br><span class="line">  &lt;section id=&quot;posts&quot; class=&quot;posts-collapse&quot;&gt;</span><br><span class="line">    &lt;div class=&quot;collection-title&quot;&gt;</span><br><span class="line">      &lt;&#123;% if theme.seo %&#125;h2&#123;% else %&#125;h1&#123;% endif %&#125;&gt;&#123;#</span><br><span class="line">      #&#125;&#123;&#123; page.category &#125;&#125;&#123;#</span><br><span class="line">      #&#125;&lt;small&gt;&#123;&#123;  __(&#x27;title.category&#x27;)  &#125;&#125;&lt;/small&gt;</span><br><span class="line">      &lt;/&#123;% if theme.seo %&#125;h2&#123;% else %&#125;h1&#123;% endif %&#125;&gt;</span><br><span class="line">    &lt;/div&gt;</span><br></pre></td></tr></table></figure>
-
-<p>以上代码来自<strong>layout&#x2F;category.swig</strong>这个文件。同一目录下的<strong>tag.swig</strong>也包含类似的代码。问题就在于这段代码里的h1和h2。接下来找到<strong>source&#x2F;css&#x2F;_common&#x2F;components&#x2F;post&#x2F;post-collapse.styl</strong>这个文件，发现里面含有<code>h2 &#123; margin-left: 20px; &#125;</code>这行代码，但是并没有定义h1。我想这应该就是造成这个问题的原因。于是我加入了<code>h1 &#123; margin-left: 20px; &#125;</code>。果然问题迎刃而解！如下图：</p>
-<p><img src="http://caolingyu.me/images/post3_2.png" alt="Pic"></p>
+    <title>elasticsearch--从安装到使用</title>
+    <url>/2018/06/14/elasticsearch-%E4%BB%8E%E5%AE%89%E8%A3%85%E5%88%B0%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<p>最近在做一个实体链接的项目，主要是先用命名实体识别的模型去识别文本中的特定实体，然后再将识别出来的实体链接到知识图谱中对应的节点。之所以要这么做是因为往往识别出来的实体名字并不和图谱中的节点完全对应。关于实体链接的具体细节在这里不多赘述，因为不是本文的重点，大致就是对每个识别出的实体从图谱中选出一些候选节点，计算相似度然后选最相似的。  </p>
+<p>这里主要说一下挑选候选节点这一步，之所以要用到elasticsearch，是因为我们的图谱目前还不支持模糊搜索，而es的match提供了很好的模糊搜索功能，并且还能给每个结果打分。</p>
+<p>我的系统是macOS 10.13.5，安装的es版本是5.6.4。在macOS上有两种主流的安装方法，一种是从官网直接下载压缩包，另一种是用homebrew安装，本文使用的是前一种方法。<br>首先去<a href="https://www.elastic.co/downloads/past-releases/elasticsearch-5-6-4">官网</a>下载对应版本，下载解压缩完以后我把放在用户根目录下，所以路径是~&#x2F;elasticsearch-5.6.4&#x2F;，这时候其实已经可以运行了，执行elasticsearch-5.6.4&#x2F;bin&#x2F;elasticsearch就可以启动es。但是有一个问题，es默认的analyzer对中文的分词不是很友好，往往会在搜索的时候把中文分成一个个字，这显然不是我们想要的，好在有ik插件，解决了这个问题。安装ik插件也有两种方法，一种是手动从官网下载安装包放到指定文件夹，另一种可以用elasticsearch-plugin命令来安装（需要安装5.5.1版本以上的es）<br><code>./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v5.6.4/elasticsearch-analysis-ik-5.6.4.zip</code><br>因为我安装的es高于5.5.1，所以我采用了这种方法，很方便。具体可以参考<a href="https://github.com/medcl/elasticsearch-analysis-ik#install">官方repo</a></p>
+<p>接下来就是es的使用了，首先了解一下es中的索引，它是ES中的一个存储类型，与数据库类似，内部包含类型字段，类型中包含各种文档。如果和关系型数据库进行类比的话，索引就是数据库，类型就是数据库中的表，文档就是每张表中的每一行记录。<br>下面介绍一些常用的操作  </p>
+<ul>
+<li><p>查看所有索引<br><code>curl &#39;localhost:9200/_cat/indices?v&#39;</code>  </p>
+</li>
+<li><p>创建一个名为country的索引<br><code>curl -XPUT &#39;localhost:9200/country?pretty&#39;</code>  </p>
+</li>
+<li><p>在country中设置一个名为city的类型，并写入一条数据  </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -XPUT &#x27;localhost:9200/country/city/1?pretty&#x27; -d &#x27;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;name&quot;: &quot;London&quot;</span><br><span class="line">&#125;&#x27;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查询  </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -XGET &#x27;localhost:9200/country/city/1?pretty&#x27;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;_index&quot; : &quot;country&quot;,</span><br><span class="line">  &quot;_type&quot; : &quot;city&quot;,</span><br><span class="line">  &quot;_id&quot; : &quot;1&quot;,</span><br><span class="line">  &quot;_version&quot; : 1,</span><br><span class="line">  &quot;found&quot; : true, &quot;_source&quot; : &#123; &quot;name&quot;: &quot;London&quot; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>删除索引<br><code>curl -XDELETE &#39;localhost:9200/customer?pretty&#39;</code></p>
+</li>
+</ul>
+<p>另外如果需要在python中使用es，可以参考以下文章  </p>
+<ul>
+<li><a href="https://www.cnblogs.com/yxpblog/p/5141738.html">python操作Elasticsearch (一、例子)</a>  </li>
+<li><a href="https://www.cnblogs.com/cswuyg/p/5651620.html">Elasticsearch使用备忘</a>  </li>
+<li><a href="https://blog.csdn.net/YHYR_YCY/article/details/78882011">基于Python操作ElasticSearch</a><br>还有一篇讲解es中的映射和分析的，我觉得写的也不错  </li>
+<li><a href="https://blog.csdn.net/hzrandd/article/details/47128895">ElasticSearch映射和分析</a></li>
+</ul>
 ]]></content>
       <categories>
         <category>Tech</category>
       </categories>
       <tags>
-        <tag>NEXT</tag>
-        <tag>Hexo</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>macOS使用vue-cli创建项目后修改默认打开浏览器</title>
-    <url>/2018/04/10/macOS%E4%BD%BF%E7%94%A8vue-cli%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE%E5%90%8E%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E6%89%93%E5%BC%80%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
-    <content><![CDATA[<p>用vue-cli创建项目以后会用系统默认浏览器打开，我在mac上用safari作日常浏览器，开发调试一般用chrome，这里介绍一个修改npm run dev默认打开浏览器的方法</p>
-<span id="more"></span>
-<p><strong>打开项目文件夹中node_modules&#x2F;webpack-dev-server&#x2F;bin中的webpack-dev-server.js文件，找到openOptions，默认为{}，在其中添加app: ‘google chrome’。</strong></p>
-]]></content>
-      <categories>
-        <category>Tech</category>
-      </categories>
-      <tags>
-        <tag>macOS</tag>
-        <tag>Vue</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>在服务器上部署vue项目</title>
-    <url>/2018/06/04/%E5%9C%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E9%83%A8%E7%BD%B2vue%E9%A1%B9%E7%9B%AE/</url>
-    <content><![CDATA[<p>之前用vue-cli搭建了一个ICD编码和电子病历信息抽取的前端小工具，这里讲一下如何部署在服务器上</p>
-<span id="more"></span>
-
-<ol>
-<li>在本地项目根目录下运行<br><code>npm run build</code>  </li>
-<li>在ubuntu16.04服务器上用apt-get install nginx安装，这里遇到了一些问题，安装完以后报错无法启动，发现是因为服务器不支持IPV6，需要在配置文件里将相应的行注释掉</li>
-<li>把dist里的文件和index.html打包上传至服务器上nginx目录下，我这里的&#x2F;var&#x2F;www&#x2F;，原本的nginx的root路径是&#x2F;var&#x2F;www&#x2F;html，这里修改为&#x2F;var&#x2F;www&#x2F;frontend</li>
-<li>浏览器访问<a href="http://server_ip/%E5%8D%B3%E5%8F%AF">http://server_ip/即可</a></li>
-</ol>
-<p>Reference: <a href="https://www.zhihu.com/question/46630687/answer/102284339">知乎</a></p>
-]]></content>
-      <categories>
-        <category>Tech</category>
-      </categories>
-      <tags>
-        <tag>Vue</tag>
-        <tag>Nginx</tag>
+        <tag>ElasticSearch</tag>
       </tags>
   </entry>
   <entry>
@@ -352,6 +351,28 @@
 ]]></content>
   </entry>
   <entry>
+    <title>在服务器上部署vue项目</title>
+    <url>/2018/06/04/%E5%9C%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E9%83%A8%E7%BD%B2vue%E9%A1%B9%E7%9B%AE/</url>
+    <content><![CDATA[<p>之前用vue-cli搭建了一个ICD编码和电子病历信息抽取的前端小工具，这里讲一下如何部署在服务器上</p>
+<span id="more"></span>
+
+<ol>
+<li>在本地项目根目录下运行<br><code>npm run build</code>  </li>
+<li>在ubuntu16.04服务器上用apt-get install nginx安装，这里遇到了一些问题，安装完以后报错无法启动，发现是因为服务器不支持IPV6，需要在配置文件里将相应的行注释掉</li>
+<li>把dist里的文件和index.html打包上传至服务器上nginx目录下，我这里的&#x2F;var&#x2F;www&#x2F;，原本的nginx的root路径是&#x2F;var&#x2F;www&#x2F;html，这里修改为&#x2F;var&#x2F;www&#x2F;frontend</li>
+<li>浏览器访问<a href="http://server_ip/%E5%8D%B3%E5%8F%AF">http://server_ip/即可</a></li>
+</ol>
+<p>Reference: <a href="https://www.zhihu.com/question/46630687/answer/102284339">知乎</a></p>
+]]></content>
+      <categories>
+        <category>Tech</category>
+      </categories>
+      <tags>
+        <tag>Vue</tag>
+        <tag>Nginx</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>用Git和Gitlab进行协作</title>
     <url>/2019/01/08/%E7%94%A8Git%E5%92%8CGitlab%E8%BF%9B%E8%A1%8C%E5%8D%8F%E4%BD%9C/</url>
     <content><![CDATA[<p>在Gitlab上的远程仓库为每个用户创建分支, 例如dev-xxx<br>本地clone项目以后用fetch命令将远程分支拉到本地</p>
@@ -413,39 +434,18 @@
       </categories>
   </entry>
   <entry>
-    <title>elasticsearch--从安装到使用</title>
-    <url>/2018/06/14/elasticsearch-%E4%BB%8E%E5%AE%89%E8%A3%85%E5%88%B0%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<p>最近在做一个实体链接的项目，主要是先用命名实体识别的模型去识别文本中的特定实体，然后再将识别出来的实体链接到知识图谱中对应的节点。之所以要这么做是因为往往识别出来的实体名字并不和图谱中的节点完全对应。关于实体链接的具体细节在这里不多赘述，因为不是本文的重点，大致就是对每个识别出的实体从图谱中选出一些候选节点，计算相似度然后选最相似的。  </p>
-<p>这里主要说一下挑选候选节点这一步，之所以要用到elasticsearch，是因为我们的图谱目前还不支持模糊搜索，而es的match提供了很好的模糊搜索功能，并且还能给每个结果打分。</p>
-<p>我的系统是macOS 10.13.5，安装的es版本是5.6.4。在macOS上有两种主流的安装方法，一种是从官网直接下载压缩包，另一种是用homebrew安装，本文使用的是前一种方法。<br>首先去<a href="https://www.elastic.co/downloads/past-releases/elasticsearch-5-6-4">官网</a>下载对应版本，下载解压缩完以后我把放在用户根目录下，所以路径是~&#x2F;elasticsearch-5.6.4&#x2F;，这时候其实已经可以运行了，执行elasticsearch-5.6.4&#x2F;bin&#x2F;elasticsearch就可以启动es。但是有一个问题，es默认的analyzer对中文的分词不是很友好，往往会在搜索的时候把中文分成一个个字，这显然不是我们想要的，好在有ik插件，解决了这个问题。安装ik插件也有两种方法，一种是手动从官网下载安装包放到指定文件夹，另一种可以用elasticsearch-plugin命令来安装（需要安装5.5.1版本以上的es）<br><code>./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v5.6.4/elasticsearch-analysis-ik-5.6.4.zip</code><br>因为我安装的es高于5.5.1，所以我采用了这种方法，很方便。具体可以参考<a href="https://github.com/medcl/elasticsearch-analysis-ik#install">官方repo</a></p>
-<p>接下来就是es的使用了，首先了解一下es中的索引，它是ES中的一个存储类型，与数据库类似，内部包含类型字段，类型中包含各种文档。如果和关系型数据库进行类比的话，索引就是数据库，类型就是数据库中的表，文档就是每张表中的每一行记录。<br>下面介绍一些常用的操作  </p>
-<ul>
-<li><p>查看所有索引<br><code>curl &#39;localhost:9200/_cat/indices?v&#39;</code>  </p>
-</li>
-<li><p>创建一个名为country的索引<br><code>curl -XPUT &#39;localhost:9200/country?pretty&#39;</code>  </p>
-</li>
-<li><p>在country中设置一个名为city的类型，并写入一条数据  </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -XPUT &#x27;localhost:9200/country/city/1?pretty&#x27; -d &#x27;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;name&quot;: &quot;London&quot;</span><br><span class="line">&#125;&#x27;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>查询  </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">curl -XGET &#x27;localhost:9200/country/city/1?pretty&#x27;</span><br><span class="line">&#123;</span><br><span class="line">  &quot;_index&quot; : &quot;country&quot;,</span><br><span class="line">  &quot;_type&quot; : &quot;city&quot;,</span><br><span class="line">  &quot;_id&quot; : &quot;1&quot;,</span><br><span class="line">  &quot;_version&quot; : 1,</span><br><span class="line">  &quot;found&quot; : true, &quot;_source&quot; : &#123; &quot;name&quot;: &quot;London&quot; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>删除索引<br><code>curl -XDELETE &#39;localhost:9200/customer?pretty&#39;</code></p>
-</li>
-</ul>
-<p>另外如果需要在python中使用es，可以参考以下文章  </p>
-<ul>
-<li><a href="https://www.cnblogs.com/yxpblog/p/5141738.html">python操作Elasticsearch (一、例子)</a>  </li>
-<li><a href="https://www.cnblogs.com/cswuyg/p/5651620.html">Elasticsearch使用备忘</a>  </li>
-<li><a href="https://blog.csdn.net/YHYR_YCY/article/details/78882011">基于Python操作ElasticSearch</a><br>还有一篇讲解es中的映射和分析的，我觉得写的也不错  </li>
-<li><a href="https://blog.csdn.net/hzrandd/article/details/47128895">ElasticSearch映射和分析</a></li>
-</ul>
+    <title>macOS使用vue-cli创建项目后修改默认打开浏览器</title>
+    <url>/2018/04/10/macOS%E4%BD%BF%E7%94%A8vue-cli%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE%E5%90%8E%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E6%89%93%E5%BC%80%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
+    <content><![CDATA[<p>用vue-cli创建项目以后会用系统默认浏览器打开，我在mac上用safari作日常浏览器，开发调试一般用chrome，这里介绍一个修改npm run dev默认打开浏览器的方法</p>
+<span id="more"></span>
+<p><strong>打开项目文件夹中node_modules&#x2F;webpack-dev-server&#x2F;bin中的webpack-dev-server.js文件，找到openOptions，默认为{}，在其中添加app: ‘google chrome’。</strong></p>
 ]]></content>
       <categories>
         <category>Tech</category>
       </categories>
       <tags>
-        <tag>ElasticSearch</tag>
+        <tag>Vue</tag>
+        <tag>macOS</tag>
       </tags>
   </entry>
 </search>
