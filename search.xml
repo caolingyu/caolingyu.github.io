@@ -30,15 +30,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Happy Birthday</title>
-    <url>/2017/05/28/Happy-Birthday/</url>
-    <content><![CDATA[<p>祝我生日快乐~继续加油！</p>
-]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-  </entry>
-  <entry>
     <title>Gitlab服务器的备份和迁移</title>
     <url>/2018/06/18/Gitlab%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%81%E7%A7%BB/</url>
     <content><![CDATA[<p>之前在一台Ubuntu的服务器上搭建了一个Gitlab服务器，最近这台服务器即将被回收，所以需要将原来的Gitlab迁移到新的服务器上，由于我是用Omnibus安装的，备份和还原的步骤相对来说比较简单，但也有不少需要注意的点。</p>
@@ -70,6 +61,15 @@
         <tag>Gitlab</tag>
         <tag>Ubuntu</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>Happy Birthday</title>
+    <url>/2017/05/28/Happy-Birthday/</url>
+    <content><![CDATA[<p>祝我生日快乐~继续加油！</p>
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
   </entry>
   <entry>
     <title>Markdown语法</title>
@@ -320,31 +320,6 @@
       </tags>
   </entry>
   <entry>
-    <title>用flask、gunicorn和nginx在centos上部署API</title>
-    <url>/2018/06/04/%E7%94%A8flask%E3%80%81gunicorn%E5%92%8Cngix%E5%9C%A8centos%E4%B8%8A%E9%83%A8%E7%BD%B2API/</url>
-    <content><![CDATA[<p>最近需要把ICD编码和命名实体识别的API部署在公司外网gpu服务器上，服务器是centos系统的，网上的教程大多数都是基于ubuntu的，于是自己研究了一下，简单说一下步骤吧。</p>
-<span id="more"></span>
-
-<ol>
-<li>我用的conda，首先创建一个虚拟环境env<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda create -n env python=3.6</span><br><span class="line">source activate env</span><br></pre></td></tr></table></figure></li>
-<li>安装flask（如果没有的话）, gunicorn<br><code>pip install flask gunicorn</code></li>
-<li>在代码目录中创建一个<code>wsgi.py</code>文件，内容如下<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> app <span class="keyword">import</span> app  </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:  </span><br><span class="line">	app.run()</span><br></pre></td></tr></table></figure></li>
-<li>试着启动一下（可以在screen或者tmux里）<br><code>gunicorn --bind 127.0.0.1:8000 wsgi:app</code></li>
-<li>安装nginx<br><code>yum install nginx</code><br>添加一个配置文件<br><code>sudo vim /etc/nginx/conf.d/project.conf</code><br>写入以下内容  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	server_name  your_public_dnsname_here;</span><br><span class="line">	</span><br><span class="line">	location / &#123;</span><br><span class="line">		proxy_pass http://127.0.0.1:8000;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>启动nginx服务，搞定！<br><code>systemctl start nginx</code></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Tech</category>
-      </categories>
-      <tags>
-        <tag>Nginx</tag>
-        <tag>Flask</tag>
-        <tag>gunicorn</tag>
-        <tag>CentOs</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>《好好说话2》节选</title>
     <url>/2024/05/28/%E5%A5%BD%E5%A5%BD%E8%AF%B4%E8%AF%9D-%E8%8A%82%E9%80%89/</url>
     <content><![CDATA[<p><strong>第一十二章 第一节　避开冲突危险区</strong></p>
@@ -429,6 +404,31 @@
       </categories>
       <tags>
         <tag>Gitlab</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>用flask、gunicorn和nginx在centos上部署API</title>
+    <url>/2018/06/04/%E7%94%A8flask%E3%80%81gunicorn%E5%92%8Cngix%E5%9C%A8centos%E4%B8%8A%E9%83%A8%E7%BD%B2API/</url>
+    <content><![CDATA[<p>最近需要把ICD编码和命名实体识别的API部署在公司外网gpu服务器上，服务器是centos系统的，网上的教程大多数都是基于ubuntu的，于是自己研究了一下，简单说一下步骤吧。</p>
+<span id="more"></span>
+
+<ol>
+<li>我用的conda，首先创建一个虚拟环境env<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">conda create -n env python=3.6</span><br><span class="line">source activate env</span><br></pre></td></tr></table></figure></li>
+<li>安装flask（如果没有的话）, gunicorn<br><code>pip install flask gunicorn</code></li>
+<li>在代码目录中创建一个<code>wsgi.py</code>文件，内容如下<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> app <span class="keyword">import</span> app  </span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:  </span><br><span class="line">	app.run()</span><br></pre></td></tr></table></figure></li>
+<li>试着启动一下（可以在screen或者tmux里）<br><code>gunicorn --bind 127.0.0.1:8000 wsgi:app</code></li>
+<li>安装nginx<br><code>yum install nginx</code><br>添加一个配置文件<br><code>sudo vim /etc/nginx/conf.d/project.conf</code><br>写入以下内容  <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">server &#123;</span><br><span class="line">	listen 80;</span><br><span class="line">	server_name  your_public_dnsname_here;</span><br><span class="line">	</span><br><span class="line">	location / &#123;</span><br><span class="line">		proxy_pass http://127.0.0.1:8000;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>启动nginx服务，搞定！<br><code>systemctl start nginx</code></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Tech</category>
+      </categories>
+      <tags>
+        <tag>Nginx</tag>
+        <tag>Flask</tag>
+        <tag>gunicorn</tag>
+        <tag>CentOs</tag>
       </tags>
   </entry>
   <entry>
