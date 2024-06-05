@@ -30,6 +30,39 @@
       </tags>
   </entry>
   <entry>
+    <title>Gitlab服务器的备份和迁移</title>
+    <url>/2018/06/18/Gitlab%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%81%E7%A7%BB/</url>
+    <content><![CDATA[<p>之前在一台Ubuntu的服务器上搭建了一个Gitlab服务器，最近这台服务器即将被回收，所以需要将原来的Gitlab迁移到新的服务器上，由于我是用Omnibus安装的，备份和还原的步骤相对来说比较简单，但也有不少需要注意的点。</p>
+<p>首先说一下环境和版本  </p>
+<ul>
+<li>系统：Ubuntu 16.04</li>
+<li>Gitlab版本：gitlab-ee_10.7.0-ee.0_amd64</li>
+<li>安装方法：Omnibus</li>
+</ul>
+<p>大致流程如下  </p>
+<ol>
+<li>在原服务器执行备份</li>
+<li>在新服务器安装<strong>相同版本</strong>的Gitlab</li>
+<li>将原服务器的备份传输到新服务器</li>
+<li>执行还原命令</li>
+<li>Done</li>
+</ol>
+<p>在原服务器进行备份相当简单，只需要执行以下命令<br><code>gitlab-rake gitlab:backup:create</code><br>默认的备份位置是&#x2F;var&#x2F;opt&#x2F;gitlab&#x2F;backups，由于原服务器这个分区的空间已经不足了，所以在备份的时候出现报错，这里顺便提一下，第一次报错以后我把backups文件夹删除又创建了，再执行备份命令的时候提示权限不够，执行以下命令可以解决  </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chown git /var/opt/gitlab/backups</span><br><span class="line">chmod 700 /var/opt/gitlab/backups</span><br></pre></td></tr></table></figure>
+<p>磁盘空间不足的问题可以通过修改备份的保存位置解决<br>打开&#x2F;etc&#x2F;gitlab&#x2F;gitlab.rb文件，找到这一行<br><code>default[&#39;gitlab&#39;][&#39;gitlab-rails&#39;][&#39;backup_path&#39;] = &quot;/var/opt/gitlab/backups&quot;</code><br>修改后面的路径以后reconfigure一下再备份即可  </p>
+<p>在新服务器上安装完gitlab以后，执行以下命令进行还原  </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo gitlab-ctl stop unicorn</span><br><span class="line">sudo gitlab-ctl stop sidekiq</span><br><span class="line">sudo gitlab-rake gitlab:backup:restore BACKUP=&#x27;your_backup_file&#x27;</span><br><span class="line">sudo gitlab-ctl restart</span><br></pre></td></tr></table></figure>
+<p>如果要备份和还原配置文件的话只需要将&#x2F;etc&#x2F;gitlab文件夹打包传输到新服务器，解压放到新服务器相同的目录下。可以将新gitlab产生的配置文件夹备份一下以备不时之需。</p>
+]]></content>
+      <categories>
+        <category>Tech</category>
+      </categories>
+      <tags>
+        <tag>Gitlab</tag>
+        <tag>Ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Happy Birthday</title>
     <url>/2017/05/28/Happy-Birthday/</url>
     <content><![CDATA[<p>祝我生日快乐~继续加油！</p>
@@ -138,39 +171,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Gitlab服务器的备份和迁移</title>
-    <url>/2018/06/18/Gitlab%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E5%A4%87%E4%BB%BD%E5%92%8C%E8%BF%81%E7%A7%BB/</url>
-    <content><![CDATA[<p>之前在一台Ubuntu的服务器上搭建了一个Gitlab服务器，最近这台服务器即将被回收，所以需要将原来的Gitlab迁移到新的服务器上，由于我是用Omnibus安装的，备份和还原的步骤相对来说比较简单，但也有不少需要注意的点。</p>
-<p>首先说一下环境和版本  </p>
-<ul>
-<li>系统：Ubuntu 16.04</li>
-<li>Gitlab版本：gitlab-ee_10.7.0-ee.0_amd64</li>
-<li>安装方法：Omnibus</li>
-</ul>
-<p>大致流程如下  </p>
-<ol>
-<li>在原服务器执行备份</li>
-<li>在新服务器安装<strong>相同版本</strong>的Gitlab</li>
-<li>将原服务器的备份传输到新服务器</li>
-<li>执行还原命令</li>
-<li>Done</li>
-</ol>
-<p>在原服务器进行备份相当简单，只需要执行以下命令<br><code>gitlab-rake gitlab:backup:create</code><br>默认的备份位置是&#x2F;var&#x2F;opt&#x2F;gitlab&#x2F;backups，由于原服务器这个分区的空间已经不足了，所以在备份的时候出现报错，这里顺便提一下，第一次报错以后我把backups文件夹删除又创建了，再执行备份命令的时候提示权限不够，执行以下命令可以解决  </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">chown git /var/opt/gitlab/backups</span><br><span class="line">chmod 700 /var/opt/gitlab/backups</span><br></pre></td></tr></table></figure>
-<p>磁盘空间不足的问题可以通过修改备份的保存位置解决<br>打开&#x2F;etc&#x2F;gitlab&#x2F;gitlab.rb文件，找到这一行<br><code>default[&#39;gitlab&#39;][&#39;gitlab-rails&#39;][&#39;backup_path&#39;] = &quot;/var/opt/gitlab/backups&quot;</code><br>修改后面的路径以后reconfigure一下再备份即可  </p>
-<p>在新服务器上安装完gitlab以后，执行以下命令进行还原  </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo gitlab-ctl stop unicorn</span><br><span class="line">sudo gitlab-ctl stop sidekiq</span><br><span class="line">sudo gitlab-rake gitlab:backup:restore BACKUP=&#x27;your_backup_file&#x27;</span><br><span class="line">sudo gitlab-ctl restart</span><br></pre></td></tr></table></figure>
-<p>如果要备份和还原配置文件的话只需要将&#x2F;etc&#x2F;gitlab文件夹打包传输到新服务器，解压放到新服务器相同的目录下。可以将新gitlab产生的配置文件夹备份一下以备不时之需。</p>
-]]></content>
-      <categories>
-        <category>Tech</category>
-      </categories>
-      <tags>
-        <tag>Gitlab</tag>
-        <tag>Ubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Msc Project的一些思路</title>
     <url>/2017/05/23/Msc-Project%E7%9A%84%E4%B8%80%E4%BA%9B%E6%80%9D%E8%B7%AF/</url>
     <content><![CDATA[<p>这篇文章主要讲一下我研究生毕业论文的思路</p>
@@ -222,31 +222,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Win10+Ubuntu双系统卸载Ubuntu</title>
-    <url>/2017/05/24/Win10-Ubuntu%E5%8F%8C%E7%B3%BB%E7%BB%9F%E5%8D%B8%E8%BD%BDUbuntu/</url>
-    <content><![CDATA[<p>安装Windows10和Ubuntu双系统以后卸载Ubuntu的方法</p>
-<span id="more"></span>
-<p>之前跑Machine translation深度学习训练时候在我平时打游戏的独显笔记本上安装了Ubuntu双系统，用的是UEFI的启动方法。</p>
-<p>跑完任务以后发现Ubuntu出了点问题…于是决定卸载了。由于遇到了一些坑，所以在这里记录一下。</p>
-<ol>
-<li>首先打开windows的磁盘工具将Ubuntu的四个分区中能格式化的三个全部格式化，剩下的那个就是比较难搞的UEFI启动项。</li>
-<li>接下来按win键+R，在运行窗口里输入Diskpart。</li>
-<li>进入命令行以后首先输入<code>list disk</code>，就会看到可选的磁盘，由于我将Ubuntu装在磁盘1上，所以输入<code>select disk 1</code>选择磁盘1。接下来输入<code>list partition</code>来显示这个磁盘有哪些分区，要删除的分区应该可以根据容量大小判断出来，于是输入<code>select partition X</code>。最后输入<code>delete partition override</code>从而删除该分区。</li>
-<li>删除了分区以后可以再打开磁盘工具进行确认。然后使用easyUEFI软件删除Ubuntu的启动项即可。</li>
-</ol>
-<p>–</p>
-<p>Reference: <a href="http://blog.csdn.net/qq_28057541/article/details/51723914">CSDN博客</a> </p>
-]]></content>
-      <categories>
-        <category>Tech</category>
-      </categories>
-      <tags>
-        <tag>Ubuntu</tag>
-        <tag>Windows10</tag>
-        <tag>双系统</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>elasticsearch--从安装到使用</title>
     <url>/2018/06/14/elasticsearch-%E4%BB%8E%E5%AE%89%E8%A3%85%E5%88%B0%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<p>最近在做一个实体链接的项目，主要是先用命名实体识别的模型去识别文本中的特定实体，然后再将识别出来的实体链接到知识图谱中对应的节点。之所以要这么做是因为往往识别出来的实体名字并不和图谱中的节点完全对应。关于实体链接的具体细节在这里不多赘述，因为不是本文的重点，大致就是对每个识别出的实体从图谱中选出一些候选节点，计算相似度然后选最相似的。  </p>
@@ -280,6 +255,110 @@
       </categories>
       <tags>
         <tag>ElasticSearch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>macOS使用vue-cli创建项目后修改默认打开浏览器</title>
+    <url>/2018/04/10/macOS%E4%BD%BF%E7%94%A8vue-cli%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE%E5%90%8E%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E6%89%93%E5%BC%80%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
+    <content><![CDATA[<p>用vue-cli创建项目以后会用系统默认浏览器打开，我在mac上用safari作日常浏览器，开发调试一般用chrome，这里介绍一个修改npm run dev默认打开浏览器的方法</p>
+<span id="more"></span>
+<p><strong>打开项目文件夹中node_modules&#x2F;webpack-dev-server&#x2F;bin中的webpack-dev-server.js文件，找到openOptions，默认为{}，在其中添加app: ‘google chrome’。</strong></p>
+]]></content>
+      <categories>
+        <category>Tech</category>
+      </categories>
+      <tags>
+        <tag>macOS</tag>
+        <tag>Vue</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Win10+Ubuntu双系统卸载Ubuntu</title>
+    <url>/2017/05/24/Win10-Ubuntu%E5%8F%8C%E7%B3%BB%E7%BB%9F%E5%8D%B8%E8%BD%BDUbuntu/</url>
+    <content><![CDATA[<p>安装Windows10和Ubuntu双系统以后卸载Ubuntu的方法</p>
+<span id="more"></span>
+<p>之前跑Machine translation深度学习训练时候在我平时打游戏的独显笔记本上安装了Ubuntu双系统，用的是UEFI的启动方法。</p>
+<p>跑完任务以后发现Ubuntu出了点问题…于是决定卸载了。由于遇到了一些坑，所以在这里记录一下。</p>
+<ol>
+<li>首先打开windows的磁盘工具将Ubuntu的四个分区中能格式化的三个全部格式化，剩下的那个就是比较难搞的UEFI启动项。</li>
+<li>接下来按win键+R，在运行窗口里输入Diskpart。</li>
+<li>进入命令行以后首先输入<code>list disk</code>，就会看到可选的磁盘，由于我将Ubuntu装在磁盘1上，所以输入<code>select disk 1</code>选择磁盘1。接下来输入<code>list partition</code>来显示这个磁盘有哪些分区，要删除的分区应该可以根据容量大小判断出来，于是输入<code>select partition X</code>。最后输入<code>delete partition override</code>从而删除该分区。</li>
+<li>删除了分区以后可以再打开磁盘工具进行确认。然后使用easyUEFI软件删除Ubuntu的启动项即可。</li>
+</ol>
+<p>–</p>
+<p>Reference: <a href="http://blog.csdn.net/qq_28057541/article/details/51723914">CSDN博客</a> </p>
+]]></content>
+      <categories>
+        <category>Tech</category>
+      </categories>
+      <tags>
+        <tag>Ubuntu</tag>
+        <tag>Windows10</tag>
+        <tag>双系统</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>使用 Azure Databricks 进行数据科学和机器学习</title>
+    <url>/2024/06/05/%E4%BD%BF%E7%94%A8-Azure-Databricks-%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6%E5%92%8C%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</url>
+    <content><![CDATA[<p>此体系结构演示如何将 Azure Databricks、Delta Lake 和 MLflow 用于数据科学和机器学习，从而改进操作。 可通过开发、训练和部署机器学习模型来提高整体效率和客户体验。</p>
+<h2 id="体系结构"><a href="#体系结构" class="headerlink" title="体系结构"></a>体系结构</h2><p>Architecture diagram showing how Azure Databricks works with data storage services to refine and analyze data and make it available for other services.</p>
+<p><a href="https://learn.microsoft.com/zh-cn/azure/architecture/solution-ideas/media/azure-databricks-data-science-machine-learning-architecture.svg">pic1</a></p>
+<p>该图包含三个灰色矩形：一个标记为“进程”，一个标记为“服务”，一个标记为“存储”。 “进程”和“服务”矩形在图的上部彼此相邻。 服务矩形包含一个带有机器学习和 Azure Kubernetes 服务图标的白框。 另一个白框横跨“进程”和“服务”矩形。 它包含 Azure Databricks 和 MLflow 的图标。 一个箭头从该框指向“服务”矩形中的白色框。 “进程”矩形下方是“存储”矩形。 它包含一个带有 Data Lake Storage、Delta Lake 图标的白色框，以及三个标记为“铜”、“银”和“金”的数据库表。 三条线连接处理和存储矩形，每条线的每一端都有箭头。</p>
+<p>该解决方案存储、处理和提供数据：</p>
+<h2 id="数据流"><a href="#数据流" class="headerlink" title="数据流"></a>数据流</h2><h3 id="存储"><a href="#存储" class="headerlink" title="存储"></a>存储</h3><p>Data Lake Storage 以 Delta Lake 格式存储数据。 Delta Lake 构成了数据湖的特选层。 奖牌体系结构将数据组织成三层：</p>
+<ul>
+<li>“铜”表保存原始数据。</li>
+<li>“银”表包含经过清理、筛选的数据。</li>
+<li>“金”表存储可用于分析和报告的聚合数据。</li>
+</ul>
+<h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><p>来自各种语言、框架和库的代码准备、优化和清理原始数据 (1)。 编码可能性包括 Python、R、SQL、Spark、Pandas 和 Koalas。</p>
+<p>Azure Databricks 运行数据科学工作负载。 该平台还构建和训练机器学习模型 (2)。 Azure Databricks 使用预安装的优化库。 示例包括 scikit-learn、TensorFlow、PyTorch 和 XGBoost。</p>
+<p>MLflow 跟踪捕获机器学习试验、模型运行和结果 (3)。 当最佳模型准备好投入生产时，Azure Databricks 会将该模型部署到 MLflow 模型存储库。 此集中式注册表存储有关生产模型的信息。 注册表还使模型可用于其他组件：</p>
+<p>Spark 和 Python 管道可以引入模型。 这些管道处理批处理工作负载或流式 ETL 流程。<br>REST API 为多种目的提供对模型的访问。 例如移动和 Web 应用程序中的测试和交互式评分。</p>
+<h3 id="服务"><a href="#服务" class="headerlink" title="服务"></a>服务</h3><p>Azure Databricks 可以将模型部署到其他服务，例如机器学习和 AKS (4)。</p>
+<h3 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h3><p>Azure Databricks 是一个数据分析平台。 其完全托管的 Spark 群集运行数据科学工作负载。 Azure Databricks 还使用预安装的优化库来构建和训练机器学习模型。 MLflow 与 Azure Databricks 的集成提供了一种跟踪试验、将模型存储在存储库中以及使模型可用于其他服务的方法。 Azure Databricks 提供可缩放性：</p>
+<p>单节点计算群集处理小型数据集和单模型运行。<br>对于大型数据集，可以使用多节点计算群集或图形处理单元 (GPU) 群集。 这些群集使用 HorovodRunner 和 Hyperopt 等库和框架进行并行模型运行。<br>Data Lake Storage 是一种可缩放且安全的数据湖，适用于高性能分析工作负载。 这项服务可管理 PB 量级的信息，同时保持数百千兆的吞吐量。 数据可以具有以下特征：</p>
+<p>结构化、半结构化或非结构化。<br>来自多个异构源，例如日志、文件和媒体。<br>静态、来自批处理或流式处理。<br>Delta Lake 是使用开放文件格式的存储层。 此层在 Data Lake Storage 等云存储的顶层运行。 Delta Lake 针对转换和清理批处理和流式处理数据进行了优化。 该平台支持以下特性和功能：</p>
+<p>数据版本控制和回滚。<br>原子性、一致性、隔离性和持久性 (ACID) 事务的可靠性。<br>数据准备、模型训练和模型服务的一致标准。<br>按时间顺序查看源数据的一致性快照。 数据科学家可以在快照上训练模型，而不是创建单独的副本。<br>MLflow 是机器学习生命周期的开源平台。 MLflow 组件可在训练和运行期间监视机器学习模型。 存储的信息包括代码、数据、配置信息和结果。 MLflow 还可存储模型并将其加载到生产环境中。 由于 MLflow 使用开放框架，因此各种服务、应用程序、框架和工具都可以使用这些模型。</p>
+<p>机器学习是一个基于云的环境，可帮助你生成、部署和管理预测分析解决方案。 使用这些模型可以预测行为、结果和趋势。</p>
+<p>AKS 是高度可用、安全且完全托管的 Kubernetes 服务。 使用 AKS 可以轻松部署和管理容器化应用程序。</p>
+<h3 id="方案详细信息"><a href="#方案详细信息" class="headerlink" title="方案详细信息"></a>方案详细信息</h3><p>随着组织认识到数据科学和机器学习的力量，你可以提高效率、增强客户体验并预测变化。 要在业务关键型用例中实现这些目标，需要一致且可靠的模式：</p>
+<p>跟踪试验。<br>再现结果。<br>将机器学习模型部署到生产中。<br>本文概述了一致且可靠的机器学习框架的解决方案。 Azure Databricks 构成了体系结构的核心。 存储层 Delta Lake 和机器学习平台 MLflow 也发挥着重要作用。 这些组件与 Azure Data Lake Storage、Azure 机器学习和 Azure Kubernetes 服务 (AKS) 等其他服务无缝集成。</p>
+<p>这些服务共同为数据科学和机器学习提供了一种解决方案，其中包括：</p>
+<p>简单：开放数据湖简化了体系结构。 数据湖包含特选层 Delta Lake。 该层以开源格式提供对数据的访问。</p>
+<p>开放：该解决方案支持开源代码、开放标准和开放框架。 此方法可最大程度地减少将来更新的需求。 Azure Databricks 和机器学习本机支持 MLflow 和 Delta Lake。 这些组件共同提供行业领先的机器学习操作 (MLOps)，或用于机器学习的 DevOps。 广泛的部署工具与解决方案的标准化模型格式集成。</p>
+<p>协作：数据科学和 MLOps 团队使用此解决方案协同工作。 这些团队使用 MLflow 跟踪来记录和查询试验。 团队还将模型部署到中央 MLflow 模型注册表。 然后，数据工程师在数据引入、提取-转换-加载 (ETL) 流程和流式管道中使用已部署的模型。</p>
+<p>可能的用例<br>AGL 为能源预测生成的平台激发了此解决方案。 该平台为数千个并行模型提供快速且经济高效的训练、部署和生命周期管理。</p>
+<p>除了能源供应商，该解决方案还可以使具有以下特征的组织受益：</p>
+<p>使用数据科学。<br>生成和训练机器学习模型。<br>在生产环境中运行机器学习模型。<br>示例包括以下行业中的组织：</p>
+<p>零售和电子商务。<br>银行和财务行业。<br>医疗保健与生命科学。<br>汽车工业和制造业。<br>后续步骤<br>AGL Energy 为数千个并行模型构建了一个标准化平台。 该平台为模型提供快速且具有成本效益的培训、部署和生命周期管理。<br>Open Grid Europe (OGE) 使用人工智能模型来监视天然气管道。 OGE 使用 Azure Databricks 和 MLflow 来开发模型。<br>Scandinavian Airlines (SAS) 在协作研究阶段使用 Azure Databricks。 该航空公司还使用机器学习来开发预测模型。 通过识别公司数据中的模式，这些模型可以改善日常运营。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>在coze中开发一个bot</title>
+    <url>/2024/05/31/%E5%9C%A8coze%E4%B8%AD%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AAbot/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>在服务器上部署vue项目</title>
+    <url>/2018/06/04/%E5%9C%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E9%83%A8%E7%BD%B2vue%E9%A1%B9%E7%9B%AE/</url>
+    <content><![CDATA[<p>之前用vue-cli搭建了一个ICD编码和电子病历信息抽取的前端小工具，这里讲一下如何部署在服务器上</p>
+<span id="more"></span>
+
+<ol>
+<li>在本地项目根目录下运行<br><code>npm run build</code>  </li>
+<li>在ubuntu16.04服务器上用apt-get install nginx安装，这里遇到了一些问题，安装完以后报错无法启动，发现是因为服务器不支持IPV6，需要在配置文件里将相应的行注释掉</li>
+<li>把dist里的文件和index.html打包上传至服务器上nginx目录下，我这里的&#x2F;var&#x2F;www&#x2F;，原本的nginx的root路径是&#x2F;var&#x2F;www&#x2F;html，这里修改为&#x2F;var&#x2F;www&#x2F;frontend</li>
+<li>浏览器访问<a href="http://server_ip/%E5%8D%B3%E5%8F%AF">http://server_ip/即可</a></li>
+</ol>
+<p>Reference: <a href="https://www.zhihu.com/question/46630687/answer/102284339">知乎</a></p>
+]]></content>
+      <categories>
+        <category>Tech</category>
+      </categories>
+      <tags>
+        <tag>Vue</tag>
+        <tag>Nginx</tag>
       </tags>
   </entry>
   <entry>
@@ -351,28 +430,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>在服务器上部署vue项目</title>
-    <url>/2018/06/04/%E5%9C%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E9%83%A8%E7%BD%B2vue%E9%A1%B9%E7%9B%AE/</url>
-    <content><![CDATA[<p>之前用vue-cli搭建了一个ICD编码和电子病历信息抽取的前端小工具，这里讲一下如何部署在服务器上</p>
-<span id="more"></span>
-
-<ol>
-<li>在本地项目根目录下运行<br><code>npm run build</code>  </li>
-<li>在ubuntu16.04服务器上用apt-get install nginx安装，这里遇到了一些问题，安装完以后报错无法启动，发现是因为服务器不支持IPV6，需要在配置文件里将相应的行注释掉</li>
-<li>把dist里的文件和index.html打包上传至服务器上nginx目录下，我这里的&#x2F;var&#x2F;www&#x2F;，原本的nginx的root路径是&#x2F;var&#x2F;www&#x2F;html，这里修改为&#x2F;var&#x2F;www&#x2F;frontend</li>
-<li>浏览器访问<a href="http://server_ip/%E5%8D%B3%E5%8F%AF">http://server_ip/即可</a></li>
-</ol>
-<p>Reference: <a href="https://www.zhihu.com/question/46630687/answer/102284339">知乎</a></p>
-]]></content>
-      <categories>
-        <category>Tech</category>
-      </categories>
-      <tags>
-        <tag>Vue</tag>
-        <tag>Nginx</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>用Git和Gitlab进行协作</title>
     <url>/2019/01/08/%E7%94%A8Git%E5%92%8CGitlab%E8%BF%9B%E8%A1%8C%E5%8D%8F%E4%BD%9C/</url>
     <content><![CDATA[<p>在Gitlab上的远程仓库为每个用户创建分支, 例如dev-xxx<br>本地clone项目以后用fetch命令将远程分支拉到本地</p>
@@ -432,20 +489,5 @@
       <categories>
         <category>Life</category>
       </categories>
-  </entry>
-  <entry>
-    <title>macOS使用vue-cli创建项目后修改默认打开浏览器</title>
-    <url>/2018/04/10/macOS%E4%BD%BF%E7%94%A8vue-cli%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE%E5%90%8E%E4%BF%AE%E6%94%B9%E9%BB%98%E8%AE%A4%E6%89%93%E5%BC%80%E6%B5%8F%E8%A7%88%E5%99%A8/</url>
-    <content><![CDATA[<p>用vue-cli创建项目以后会用系统默认浏览器打开，我在mac上用safari作日常浏览器，开发调试一般用chrome，这里介绍一个修改npm run dev默认打开浏览器的方法</p>
-<span id="more"></span>
-<p><strong>打开项目文件夹中node_modules&#x2F;webpack-dev-server&#x2F;bin中的webpack-dev-server.js文件，找到openOptions，默认为{}，在其中添加app: ‘google chrome’。</strong></p>
-]]></content>
-      <categories>
-        <category>Tech</category>
-      </categories>
-      <tags>
-        <tag>Vue</tag>
-        <tag>macOS</tag>
-      </tags>
   </entry>
 </search>

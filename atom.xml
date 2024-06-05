@@ -6,7 +6,7 @@
   <link href="http://caolingyu.github.io/atom.xml" rel="self"/>
   
   <link href="http://caolingyu.github.io/"/>
-  <updated>2024-05-28T14:59:32.191Z</updated>
+  <updated>2024-06-05T15:54:11.032Z</updated>
   <id>http://caolingyu.github.io/</id>
   
   <author>
@@ -15,6 +15,40 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>使用 Azure Databricks 进行数据科学和机器学习</title>
+    <link href="http://caolingyu.github.io/2024/06/05/%E4%BD%BF%E7%94%A8-Azure-Databricks-%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6%E5%92%8C%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/"/>
+    <id>http://caolingyu.github.io/2024/06/05/%E4%BD%BF%E7%94%A8-Azure-Databricks-%E8%BF%9B%E8%A1%8C%E6%95%B0%E6%8D%AE%E7%A7%91%E5%AD%A6%E5%92%8C%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</id>
+    <published>2024-06-05T15:35:05.000Z</published>
+    <updated>2024-06-05T15:54:11.032Z</updated>
+    
+    <content type="html"><![CDATA[<p>此体系结构演示如何将 Azure Databricks、Delta Lake 和 MLflow 用于数据科学和机器学习，从而改进操作。 可通过开发、训练和部署机器学习模型来提高整体效率和客户体验。</p><h2 id="体系结构"><a href="#体系结构" class="headerlink" title="体系结构"></a>体系结构</h2><p>Architecture diagram showing how Azure Databricks works with data storage services to refine and analyze data and make it available for other services.</p><p><a href="https://learn.microsoft.com/zh-cn/azure/architecture/solution-ideas/media/azure-databricks-data-science-machine-learning-architecture.svg">pic1</a></p><p>该图包含三个灰色矩形：一个标记为“进程”，一个标记为“服务”，一个标记为“存储”。 “进程”和“服务”矩形在图的上部彼此相邻。 服务矩形包含一个带有机器学习和 Azure Kubernetes 服务图标的白框。 另一个白框横跨“进程”和“服务”矩形。 它包含 Azure Databricks 和 MLflow 的图标。 一个箭头从该框指向“服务”矩形中的白色框。 “进程”矩形下方是“存储”矩形。 它包含一个带有 Data Lake Storage、Delta Lake 图标的白色框，以及三个标记为“铜”、“银”和“金”的数据库表。 三条线连接处理和存储矩形，每条线的每一端都有箭头。</p><p>该解决方案存储、处理和提供数据：</p><h2 id="数据流"><a href="#数据流" class="headerlink" title="数据流"></a>数据流</h2><h3 id="存储"><a href="#存储" class="headerlink" title="存储"></a>存储</h3><p>Data Lake Storage 以 Delta Lake 格式存储数据。 Delta Lake 构成了数据湖的特选层。 奖牌体系结构将数据组织成三层：</p><ul><li>“铜”表保存原始数据。</li><li>“银”表包含经过清理、筛选的数据。</li><li>“金”表存储可用于分析和报告的聚合数据。</li></ul><h3 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h3><p>来自各种语言、框架和库的代码准备、优化和清理原始数据 (1)。 编码可能性包括 Python、R、SQL、Spark、Pandas 和 Koalas。</p><p>Azure Databricks 运行数据科学工作负载。 该平台还构建和训练机器学习模型 (2)。 Azure Databricks 使用预安装的优化库。 示例包括 scikit-learn、TensorFlow、PyTorch 和 XGBoost。</p><p>MLflow 跟踪捕获机器学习试验、模型运行和结果 (3)。 当最佳模型准备好投入生产时，Azure Databricks 会将该模型部署到 MLflow 模型存储库。 此集中式注册表存储有关生产模型的信息。 注册表还使模型可用于其他组件：</p><p>Spark 和 Python 管道可以引入模型。 这些管道处理批处理工作负载或流式 ETL 流程。<br>REST API 为多种目的提供对模型的访问。 例如移动和 Web 应用程序中的测试和交互式评分。</p><h3 id="服务"><a href="#服务" class="headerlink" title="服务"></a>服务</h3><p>Azure Databricks 可以将模型部署到其他服务，例如机器学习和 AKS (4)。</p><h3 id="组件"><a href="#组件" class="headerlink" title="组件"></a>组件</h3><p>Azure Databricks 是一个数据分析平台。 其完全托管的 Spark 群集运行数据科学工作负载。 Azure Databricks 还使用预安装的优化库来构建和训练机器学习模型。 MLflow 与 Azure Databricks 的集成提供了一种跟踪试验、将模型存储在存储库中以及使模型可用于其他服务的方法。 Azure Databricks 提供可缩放性：</p><p>单节点计算群集处理小型数据集和单模型运行。<br>对于大型数据集，可以使用多节点计算群集或图形处理单元 (GPU) 群集。 这些群集使用 HorovodRunner 和 Hyperopt 等库和框架进行并行模型运行。<br>Data Lake Storage 是一种可缩放且安全的数据湖，适用于高性能分析工作负载。 这项服务可管理 PB 量级的信息，同时保持数百千兆的吞吐量。 数据可以具有以下特征：</p><p>结构化、半结构化或非结构化。<br>来自多个异构源，例如日志、文件和媒体。<br>静态、来自批处理或流式处理。<br>Delta Lake 是使用开放文件格式的存储层。 此层在 Data Lake Storage 等云存储的顶层运行。 Delta Lake 针对转换和清理批处理和流式处理数据进行了优化。 该平台支持以下特性和功能：</p><p>数据版本控制和回滚。<br>原子性、一致性、隔离性和持久性 (ACID) 事务的可靠性。<br>数据准备、模型训练和模型服务的一致标准。<br>按时间顺序查看源数据的一致性快照。 数据科学家可以在快照上训练模型，而不是创建单独的副本。<br>MLflow 是机器学习生命周期的开源平台。 MLflow 组件可在训练和运行期间监视机器学习模型。 存储的信息包括代码、数据、配置信息和结果。 MLflow 还可存储模型并将其加载到生产环境中。 由于 MLflow 使用开放框架，因此各种服务、应用程序、框架和工具都可以使用这些模型。</p><p>机器学习是一个基于云的环境，可帮助你生成、部署和管理预测分析解决方案。 使用这些模型可以预测行为、结果和趋势。</p><p>AKS 是高度可用、安全且完全托管的 Kubernetes 服务。 使用 AKS 可以轻松部署和管理容器化应用程序。</p><h3 id="方案详细信息"><a href="#方案详细信息" class="headerlink" title="方案详细信息"></a>方案详细信息</h3><p>随着组织认识到数据科学和机器学习的力量，你可以提高效率、增强客户体验并预测变化。 要在业务关键型用例中实现这些目标，需要一致且可靠的模式：</p><p>跟踪试验。<br>再现结果。<br>将机器学习模型部署到生产中。<br>本文概述了一致且可靠的机器学习框架的解决方案。 Azure Databricks 构成了体系结构的核心。 存储层 Delta Lake 和机器学习平台 MLflow 也发挥着重要作用。 这些组件与 Azure Data Lake Storage、Azure 机器学习和 Azure Kubernetes 服务 (AKS) 等其他服务无缝集成。</p><p>这些服务共同为数据科学和机器学习提供了一种解决方案，其中包括：</p><p>简单：开放数据湖简化了体系结构。 数据湖包含特选层 Delta Lake。 该层以开源格式提供对数据的访问。</p><p>开放：该解决方案支持开源代码、开放标准和开放框架。 此方法可最大程度地减少将来更新的需求。 Azure Databricks 和机器学习本机支持 MLflow 和 Delta Lake。 这些组件共同提供行业领先的机器学习操作 (MLOps)，或用于机器学习的 DevOps。 广泛的部署工具与解决方案的标准化模型格式集成。</p><p>协作：数据科学和 MLOps 团队使用此解决方案协同工作。 这些团队使用 MLflow 跟踪来记录和查询试验。 团队还将模型部署到中央 MLflow 模型注册表。 然后，数据工程师在数据引入、提取-转换-加载 (ETL) 流程和流式管道中使用已部署的模型。</p><p>可能的用例<br>AGL 为能源预测生成的平台激发了此解决方案。 该平台为数千个并行模型提供快速且经济高效的训练、部署和生命周期管理。</p><p>除了能源供应商，该解决方案还可以使具有以下特征的组织受益：</p><p>使用数据科学。<br>生成和训练机器学习模型。<br>在生产环境中运行机器学习模型。<br>示例包括以下行业中的组织：</p><p>零售和电子商务。<br>银行和财务行业。<br>医疗保健与生命科学。<br>汽车工业和制造业。<br>后续步骤<br>AGL Energy 为数千个并行模型构建了一个标准化平台。 该平台为模型提供快速且具有成本效益的培训、部署和生命周期管理。<br>Open Grid Europe (OGE) 使用人工智能模型来监视天然气管道。 OGE 使用 Azure Databricks 和 MLflow 来开发模型。<br>Scandinavian Airlines (SAS) 在协作研究阶段使用 Azure Databricks。 该航空公司还使用机器学习来开发预测模型。 通过识别公司数据中的模式，这些模型可以改善日常运营。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;此体系结构演示如何将 Azure Databricks、Delta Lake 和 MLflow 用于数据科学和机器学习，从而改进操作。 可通过开发、训练和部署机器学习模型来提高整体效率和客户体验。&lt;/p&gt;
+&lt;h2 id=&quot;体系结构&quot;&gt;&lt;a href=&quot;#体系结构&quot; clas</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>在coze中开发一个bot</title>
+    <link href="http://caolingyu.github.io/2024/05/31/%E5%9C%A8coze%E4%B8%AD%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AAbot/"/>
+    <id>http://caolingyu.github.io/2024/05/31/%E5%9C%A8coze%E4%B8%AD%E5%BC%80%E5%8F%91%E4%B8%80%E4%B8%AAbot/</id>
+    <published>2024-05-31T02:47:02.000Z</published>
+    <updated>2024-06-05T15:34:52.885Z</updated>
+    
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>《好好说话2》节选</title>
@@ -203,9 +237,9 @@
     <category term="Tech" scheme="http://caolingyu.github.io/categories/Tech/"/>
     
     
-    <category term="Vue" scheme="http://caolingyu.github.io/tags/Vue/"/>
-    
     <category term="macOS" scheme="http://caolingyu.github.io/tags/macOS/"/>
+    
+    <category term="Vue" scheme="http://caolingyu.github.io/tags/Vue/"/>
     
   </entry>
   
